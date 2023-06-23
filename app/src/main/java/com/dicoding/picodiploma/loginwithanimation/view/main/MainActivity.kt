@@ -39,8 +39,15 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupAction() {
-        binding.logoutButton.setOnClickListener {
-            mainViewModel.logout()
+        binding.topAppBar.setOnMenuItemClickListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.logout_menu -> {
+                    mainViewModel.logout()
+                    true
+                }
+
+                else -> false
+            }
         }
     }
 }
