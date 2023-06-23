@@ -4,18 +4,18 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
-import com.dicoding.picodiploma.loginwithanimation.model.UserModel
-import com.dicoding.picodiploma.loginwithanimation.model.UserPreference
+import com.dicoding.picodiploma.loginwithanimation.data.StoryRepository
+import com.dicoding.picodiploma.loginwithanimation.data.pref.UserModel
 import kotlinx.coroutines.launch
 
-class MainViewModel(private val pref: UserPreference) : ViewModel() {
+class MainViewModel(private val repository: StoryRepository) : ViewModel() {
     fun getUser(): LiveData<UserModel> {
-        return pref.getUser().asLiveData()
+        return repository.getUser().asLiveData()
     }
 
     fun logout() {
         viewModelScope.launch {
-            pref.logout()
+            repository.logout()
         }
     }
 

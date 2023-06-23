@@ -20,8 +20,6 @@ import com.dicoding.picodiploma.loginwithanimation.model.UserModel
 import com.dicoding.picodiploma.loginwithanimation.model.UserPreference
 import com.dicoding.picodiploma.loginwithanimation.view.ViewModelFactory
 
-private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
-
 class SignupActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySignupBinding
     private lateinit var signupViewModel: SignupViewModel
@@ -53,7 +51,7 @@ class SignupActivity : AppCompatActivity() {
     private fun setupViewModel() {
         signupViewModel = ViewModelProvider(
             this,
-            ViewModelFactory(UserPreference.getInstance(dataStore))
+            ViewModelFactory.getInstance(application)
         )[SignupViewModel::class.java]
     }
 
