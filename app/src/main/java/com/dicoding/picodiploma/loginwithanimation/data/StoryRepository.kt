@@ -1,5 +1,6 @@
 package com.dicoding.picodiploma.loginwithanimation.data
 
+import com.dicoding.picodiploma.loginwithanimation.data.model.LoginResponse
 import com.dicoding.picodiploma.loginwithanimation.data.model.RegisterResponse
 import com.dicoding.picodiploma.loginwithanimation.data.network.ApiService
 import com.dicoding.picodiploma.loginwithanimation.data.pref.UserModel
@@ -13,6 +14,10 @@ class StoryRepository private constructor(
 
     suspend fun register(name: String, email: String, password: String): RegisterResponse {
         return apiService.register(name, email, password)
+    }
+
+    suspend fun login(email: String, password: String): LoginResponse {
+        return apiService.login(email, password)
     }
 
     fun getUser(): Flow<UserModel> {

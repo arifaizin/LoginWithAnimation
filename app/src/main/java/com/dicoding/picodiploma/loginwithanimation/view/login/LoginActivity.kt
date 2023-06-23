@@ -11,15 +11,14 @@ import android.view.WindowManager
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
-import com.dicoding.picodiploma.loginwithanimation.data.pref.UserModel
 import com.dicoding.picodiploma.loginwithanimation.databinding.ActivityLoginBinding
 import com.dicoding.picodiploma.loginwithanimation.view.ViewModelFactory
 import com.dicoding.picodiploma.loginwithanimation.view.main.MainActivity
+import com.dicoding.picodiploma.loginwithanimation.view.signup.UserUiState
 
 class LoginActivity : AppCompatActivity() {
     private lateinit var loginViewModel: LoginViewModel
     private lateinit var binding: ActivityLoginBinding
-    private lateinit var user: UserModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,10 +49,6 @@ class LoginActivity : AppCompatActivity() {
             this,
             ViewModelFactory.getInstance(application)
         )[LoginViewModel::class.java]
-
-        loginViewModel.getUser().observe(this) { user ->
-            this.user = user
-        }
     }
 
     private fun setupAction() {
@@ -67,25 +62,43 @@ class LoginActivity : AppCompatActivity() {
                 password.isEmpty() -> {
                     binding.passwordEditTextLayout.error = "Masukkan password"
                 }
-                email != user.email -> {
-                    binding.emailEditTextLayout.error = "Email tidak sesuai"
-                }
-                password != user.token -> {
-                    binding.passwordEditTextLayout.error = "Password tidak sesuai"
-                }
                 else -> {
-                    loginViewModel.login()
-                    AlertDialog.Builder(this).apply {
-                        setTitle("Yeah!")
-                        setMessage("Anda berhasil login. Sudah tidak sabar untuk berbagi ya?")
-                        setPositiveButton("Lanjut") { _, _ ->
-                            val intent = Intent(context, MainActivity::class.java)
-                            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
-                            startActivity(intent)
-                            finish()
+                    loginViewModel.login(email, password)
+
+                    loginViewModel.uiState.observe(this) { uiState ->
+                        when (uiState) {
+                            is UserUiState.Loading -> {
+                                binding.progressBar.visibility = View.VISIBLE
+                            }
+
+                            is UserUiState.Success -> {
+                                binding.progressBar.visibility = View.GONE
+                                AlertDialog.Builder(this).apply {
+                                    setTitle("Yeah!")
+                                    setMessage(uiState.message)
+                                    setPositiveButton("Lanjut") { _, _ ->
+                                        val intent = Intent(context, MainActivity::class.java)
+                                        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
+                                        startActivity(intent)
+                                        finish()
+                                    }
+                                    create()
+                                    show()
+                                }
+                            }
+
+                            is UserUiState.Error -> {
+                                binding.progressBar.visibility = View.GONE
+                                AlertDialog.Builder(this).apply {
+                                    setTitle("Oopps!")
+                                    setMessage(uiState.errorMessage)
+                                    setPositiveButton("Coba Lagi") { _, _ ->
+                                    }
+                                    create()
+                                    show()
+                                }
+                            }
                         }
-                        create()
-                        show()
                     }
                 }
             }

@@ -91,7 +91,7 @@ class SignupActivity : AppCompatActivity() {
                                 binding.progressBar.visibility = View.GONE
                                 AlertDialog.Builder(this).apply {
                                     setTitle("Oopps!")
-                                    setMessage(uiState.message)
+                                    setMessage(uiState.errorMessage)
                                     setPositiveButton("Coba Lagi") { _, _ ->
                                     }
                                     create()
