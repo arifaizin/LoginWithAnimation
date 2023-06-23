@@ -2,22 +2,15 @@ package com.dicoding.picodiploma.loginwithanimation.view.signup
 
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
-import android.content.Context
 import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.view.WindowInsets
 import android.view.WindowManager
 import androidx.appcompat.app.AlertDialog
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.preferencesDataStore
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
-import com.dicoding.picodiploma.loginwithanimation.R
 import com.dicoding.picodiploma.loginwithanimation.databinding.ActivitySignupBinding
-import com.dicoding.picodiploma.loginwithanimation.model.UserModel
-import com.dicoding.picodiploma.loginwithanimation.model.UserPreference
 import com.dicoding.picodiploma.loginwithanimation.view.ViewModelFactory
 
 class SignupActivity : AppCompatActivity() {
@@ -64,23 +57,50 @@ class SignupActivity : AppCompatActivity() {
                 name.isEmpty() -> {
                     binding.nameEditTextLayout.error = "Masukkan email"
                 }
+
                 email.isEmpty() -> {
                     binding.emailEditTextLayout.error = "Masukkan email"
                 }
+
                 password.isEmpty() -> {
                     binding.passwordEditTextLayout.error = "Masukkan password"
                 }
+
                 else -> {
-                    signupViewModel.saveUser(UserModel(name, email, password, false))
-                    AlertDialog.Builder(this).apply {
-                        setTitle("Yeah!")
-                        setMessage("Akunnya sudah jadi nih. Yuk, login dan berbagi cerita.")
-                        setPositiveButton("Lanjut") { _, _ ->
-                            finish()
+                    signupViewModel.register(name, email, password)
+                    signupViewModel.uiState.observe(this) { uiState ->
+                        when (uiState) {
+                            is UserUiState.Loading -> {
+                                binding.progressBar.visibility = View.VISIBLE
+                            }
+
+                            is UserUiState.Success -> {
+                                binding.progressBar.visibility = View.GONE
+                                AlertDialog.Builder(this).apply {
+                                    setTitle("Yeah!")
+                                    setMessage(uiState.message)
+                                    setPositiveButton("Lanjut") { _, _ ->
+                                        finish()
+                                    }
+                                    create()
+                                    show()
+                                }
+                            }
+
+                            is UserUiState.Error -> {
+                                binding.progressBar.visibility = View.GONE
+                                AlertDialog.Builder(this).apply {
+                                    setTitle("Oopps!")
+                                    setMessage(uiState.message)
+                                    setPositiveButton("Coba Lagi") { _, _ ->
+                                    }
+                                    create()
+                                    show()
+                                }
+                            }
                         }
-                        create()
-                        show()
                     }
+
                 }
             }
         }
@@ -94,12 +114,18 @@ class SignupActivity : AppCompatActivity() {
         }.start()
 
         val title = ObjectAnimator.ofFloat(binding.titleTextView, View.ALPHA, 1f).setDuration(100)
-        val nameTextView = ObjectAnimator.ofFloat(binding.nameTextView, View.ALPHA, 1f).setDuration(100)
-        val nameEditTextLayout = ObjectAnimator.ofFloat(binding.nameEditTextLayout, View.ALPHA, 1f).setDuration(100)
-        val emailTextView = ObjectAnimator.ofFloat(binding.emailTextView, View.ALPHA, 1f).setDuration(100)
-        val emailEditTextLayout = ObjectAnimator.ofFloat(binding.emailEditTextLayout, View.ALPHA, 1f).setDuration(100)
-        val passwordTextView = ObjectAnimator.ofFloat(binding.passwordTextView, View.ALPHA, 1f).setDuration(100)
-        val passwordEditTextLayout = ObjectAnimator.ofFloat(binding.passwordEditTextLayout, View.ALPHA, 1f).setDuration(100)
+        val nameTextView =
+            ObjectAnimator.ofFloat(binding.nameTextView, View.ALPHA, 1f).setDuration(100)
+        val nameEditTextLayout =
+            ObjectAnimator.ofFloat(binding.nameEditTextLayout, View.ALPHA, 1f).setDuration(100)
+        val emailTextView =
+            ObjectAnimator.ofFloat(binding.emailTextView, View.ALPHA, 1f).setDuration(100)
+        val emailEditTextLayout =
+            ObjectAnimator.ofFloat(binding.emailEditTextLayout, View.ALPHA, 1f).setDuration(100)
+        val passwordTextView =
+            ObjectAnimator.ofFloat(binding.passwordTextView, View.ALPHA, 1f).setDuration(100)
+        val passwordEditTextLayout =
+            ObjectAnimator.ofFloat(binding.passwordEditTextLayout, View.ALPHA, 1f).setDuration(100)
         val signup = ObjectAnimator.ofFloat(binding.signupButton, View.ALPHA, 1f).setDuration(100)
 
 
