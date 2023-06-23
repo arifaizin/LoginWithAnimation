@@ -5,17 +5,16 @@ import android.animation.ObjectAnimator
 import android.content.Context
 import android.content.Intent
 import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.view.WindowInsets
 import android.view.WindowManager
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.lifecycle.ViewModelProvider
-import com.dicoding.picodiploma.loginwithanimation.R
 import com.dicoding.picodiploma.loginwithanimation.databinding.ActivityLoginBinding
 import com.dicoding.picodiploma.loginwithanimation.model.UserModel
 import com.dicoding.picodiploma.loginwithanimation.model.UserPreference
@@ -59,9 +58,9 @@ class LoginActivity : AppCompatActivity() {
             ViewModelFactory(UserPreference.getInstance(dataStore))
         )[LoginViewModel::class.java]
 
-        loginViewModel.getUser().observe(this, { user ->
+        loginViewModel.getUser().observe(this) { user ->
             this.user = user
-        })
+        }
     }
 
     private fun setupAction() {
@@ -85,7 +84,7 @@ class LoginActivity : AppCompatActivity() {
                     loginViewModel.login()
                     AlertDialog.Builder(this).apply {
                         setTitle("Yeah!")
-                        setMessage("Anda berhasil login. Sudah tidak sabar untuk belajar ya?")
+                        setMessage("Anda berhasil login. Sudah tidak sabar untuk berbagi ya?")
                         setPositiveButton("Lanjut") { _, _ ->
                             val intent = Intent(context, MainActivity::class.java)
                             intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
@@ -107,17 +106,17 @@ class LoginActivity : AppCompatActivity() {
             repeatMode = ObjectAnimator.REVERSE
         }.start()
 
-        val title = ObjectAnimator.ofFloat(binding.titleTextView, View.ALPHA, 1f).setDuration(500)
-        val message = ObjectAnimator.ofFloat(binding.messageTextView, View.ALPHA, 1f).setDuration(500)
-        val emailTextView = ObjectAnimator.ofFloat(binding.emailTextView, View.ALPHA, 1f).setDuration(500)
-        val emailEditTextLayout = ObjectAnimator.ofFloat(binding.emailEditTextLayout, View.ALPHA, 1f).setDuration(500)
-        val passwordTextView = ObjectAnimator.ofFloat(binding.passwordTextView, View.ALPHA, 1f).setDuration(500)
-        val passwordEditTextLayout = ObjectAnimator.ofFloat(binding.passwordEditTextLayout, View.ALPHA, 1f).setDuration(500)
-        val login = ObjectAnimator.ofFloat(binding.loginButton, View.ALPHA, 1f).setDuration(500)
+        val title = ObjectAnimator.ofFloat(binding.titleTextView, View.ALPHA, 1f).setDuration(100)
+        val message = ObjectAnimator.ofFloat(binding.messageTextView, View.ALPHA, 1f).setDuration(100)
+        val emailTextView = ObjectAnimator.ofFloat(binding.emailTextView, View.ALPHA, 1f).setDuration(100)
+        val emailEditTextLayout = ObjectAnimator.ofFloat(binding.emailEditTextLayout, View.ALPHA, 1f).setDuration(100)
+        val passwordTextView = ObjectAnimator.ofFloat(binding.passwordTextView, View.ALPHA, 1f).setDuration(100)
+        val passwordEditTextLayout = ObjectAnimator.ofFloat(binding.passwordEditTextLayout, View.ALPHA, 1f).setDuration(100)
+        val login = ObjectAnimator.ofFloat(binding.loginButton, View.ALPHA, 1f).setDuration(100)
 
         AnimatorSet().apply {
             playSequentially(title, message, emailTextView, emailEditTextLayout, passwordTextView, passwordEditTextLayout, login)
-            startDelay = 500
+            startDelay = 100
         }.start()
     }
 
