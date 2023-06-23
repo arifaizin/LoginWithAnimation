@@ -70,11 +70,11 @@ class SignupActivity : AppCompatActivity() {
                     signupViewModel.register(name, email, password)
                     signupViewModel.uiState.observe(this) { uiState ->
                         when (uiState) {
-                            is UserUiState.Loading -> {
+                            is RegisterUiState.Loading -> {
                                 binding.progressBar.visibility = View.VISIBLE
                             }
 
-                            is UserUiState.Success -> {
+                            is RegisterUiState.Success -> {
                                 binding.progressBar.visibility = View.GONE
                                 AlertDialog.Builder(this).apply {
                                     setTitle("Yeah!")
@@ -87,7 +87,7 @@ class SignupActivity : AppCompatActivity() {
                                 }
                             }
 
-                            is UserUiState.Error -> {
+                            is RegisterUiState.Error -> {
                                 binding.progressBar.visibility = View.GONE
                                 AlertDialog.Builder(this).apply {
                                     setTitle("Oopps!")
