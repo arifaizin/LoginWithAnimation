@@ -35,9 +35,7 @@ class MainActivity : AppCompatActivity() {
         )[MainViewModel::class.java]
 
         mainViewModel.getUser().observe(this) { user ->
-            if (user.isLogin) {
-                binding.nameTextView.text = getString(R.string.greeting, user.name)
-            } else {
+            if (!user.isLogin) {
                 startActivity(Intent(this, WelcomeActivity::class.java))
                 finish()
             }
