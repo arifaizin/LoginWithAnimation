@@ -1,10 +1,14 @@
 package com.dicoding.picodiploma.loginwithanimation.view.maps
 
 import android.os.Bundle
+import android.view.View
+import androidx.activity.viewModels
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.dicoding.picodiploma.loginwithanimation.R
 import com.dicoding.picodiploma.loginwithanimation.databinding.ActivityMapsBinding
-import com.google.android.gms.maps.CameraUpdateFactory
+import com.dicoding.picodiploma.loginwithanimation.view.ViewModelFactory
+import com.dicoding.picodiploma.loginwithanimation.view.main.StoryUiState
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
@@ -15,6 +19,10 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private lateinit var mMap: GoogleMap
     private lateinit var binding: ActivityMapsBinding
+
+    private val viewModel by viewModels<MapsViewModel> {
+        ViewModelFactory.getInstance(this)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,9 +48,47 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
 
-        // Add a marker in Sydney and move the camera
-        val sydney = LatLng(-34.0, 151.0)
-        mMap.addMarker(MarkerOptions().position(sydney).title("Marker in Sydney"))
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney))
+        mMap.uiSettings.isZoomControlsEnabled = true
+
+        addManyMarker()
+
+    }
+
+    private fun addManyMarker() {
+        viewModel.getStories()
+        viewModel.uiState.observe(this) { uiState ->
+            when (uiState) {
+                is StoryUiState.Loading -> {
+                    binding.progressBar.visibility = View.VISIBLE
+                }
+
+                is StoryUiState.Success -> {
+                    binding.progressBar.visibility = View.GONE
+                    uiState.data.forEach { data ->
+                        if (data.lat != null && data.lon != null) {
+                            val latLng = LatLng(data.lat, data.lon)
+                            mMap.addMarker(
+                                MarkerOptions()
+                                    .position(latLng)
+                                    .title(data.name)
+                                    .snippet(data.description)
+                            )
+                        }
+                    }
+                }
+
+                is StoryUiState.Error -> {
+                    binding.progressBar.visibility = View.GONE
+                    AlertDialog.Builder(this).apply {
+                        setTitle("Oopps!")
+                        setMessage(uiState.errorMessage)
+                        setPositiveButton("Coba Lagi") { _, _ ->
+                        }
+                        create()
+                        show()
+                    }
+                }
+            }
+        }
     }
 }

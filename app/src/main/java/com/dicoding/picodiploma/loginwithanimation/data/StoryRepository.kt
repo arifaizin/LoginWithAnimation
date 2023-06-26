@@ -31,6 +31,10 @@ class StoryRepository private constructor(
         return apiService.getStories()
     }
 
+    suspend fun getStoriesWithLocation(): StoryResponse {
+        return apiService.getStoriesWithLocation()
+    }
+
     suspend fun uploadImage(file: File, description: String): FileUploadResponse {
         val responseBody = description.toRequestBody("text/plain".toMediaType())
         val requestImageFile = file.asRequestBody("image/jpeg".toMediaType())
