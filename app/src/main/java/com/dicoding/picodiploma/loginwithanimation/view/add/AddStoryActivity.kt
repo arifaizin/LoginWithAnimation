@@ -146,10 +146,9 @@ class AddStoryActivity : AppCompatActivity() {
 
                     is StoryUiState.Success -> {
                         binding.progressBar.visibility = View.GONE
-//
-//            val description = "Ini adalah deksripsi gambar".toRequestBody("text/plain".toMediaType())
-//            val requestImageFile = file.asRequestBody("image/jpeg".toMediaType())
-                        finish()
+                        val intent = Intent(this, MainActivity::class.java)
+                        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
+                        startActivity(intent)
                     }
 
                     is StoryUiState.Error -> {
