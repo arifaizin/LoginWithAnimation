@@ -1,5 +1,6 @@
 package com.dicoding.picodiploma.loginwithanimation.data
 
+import com.dicoding.picodiploma.loginwithanimation.data.model.FileUploadResponse
 import com.dicoding.picodiploma.loginwithanimation.data.model.LoginResponse
 import com.dicoding.picodiploma.loginwithanimation.data.model.RegisterResponse
 import com.dicoding.picodiploma.loginwithanimation.data.model.StoryResponse
@@ -7,6 +8,11 @@ import com.dicoding.picodiploma.loginwithanimation.data.network.ApiService
 import com.dicoding.picodiploma.loginwithanimation.data.pref.UserModel
 import com.dicoding.picodiploma.loginwithanimation.data.pref.UserPreference
 import kotlinx.coroutines.flow.Flow
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
+import java.io.File
 
 class StoryRepository private constructor(
     private val apiService: ApiService,
@@ -23,6 +29,17 @@ class StoryRepository private constructor(
 
     suspend fun getStories(): StoryResponse {
         return apiService.getStories()
+    }
+
+    suspend fun uploadImage(file: File, description: String): FileUploadResponse {
+        val responseBody = description.toRequestBody("text/plain".toMediaType())
+        val requestImageFile = file.asRequestBody("image/jpeg".toMediaType())
+        val imageMultipart: MultipartBody.Part = MultipartBody.Part.createFormData(
+            "photo",
+            file.name,
+            requestImageFile
+        )
+        return apiService.uploadImage(imageMultipart, responseBody)
     }
 
     fun getUser(): Flow<UserModel> {

@@ -7,18 +7,29 @@ import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import com.dicoding.picodiploma.loginwithanimation.databinding.ActivityAddStoryBinding
 import com.dicoding.picodiploma.loginwithanimation.util.createCustomTempFile
+import com.dicoding.picodiploma.loginwithanimation.util.reduceFileImage
 import com.dicoding.picodiploma.loginwithanimation.util.uriToFile
+import com.dicoding.picodiploma.loginwithanimation.view.ViewModelFactory
+import com.dicoding.picodiploma.loginwithanimation.view.main.MainActivity
+import com.dicoding.picodiploma.loginwithanimation.view.main.StoryUiState
 import java.io.File
 
 class AddStoryActivity : AppCompatActivity() {
+
+    private val viewModel by viewModels<AddStoryViewModel> {
+        ViewModelFactory.getInstance(this)
+    }
     private lateinit var binding: ActivityAddStoryBinding
     private lateinit var currentPhotoPath: String
 
@@ -122,40 +133,38 @@ class AddStoryActivity : AppCompatActivity() {
     }
 
     private fun uploadImage() {
-//        if (getFile != null) {
-//            val file = reduceFileImage(getFile as File)
+        if (getFile != null) {
+            val file = reduceFileImage(getFile as File)
+
+            viewModel.uploadImage(file, binding.descriptionEditText.text.toString())
+
+            viewModel.uiState.observe(this) { uiState ->
+                when (uiState) {
+                    is StoryUiState.Loading -> {
+                        binding.progressBar.visibility = View.VISIBLE
+                    }
+
+                    is StoryUiState.Success -> {
+                        binding.progressBar.visibility = View.GONE
 //
 //            val description = "Ini adalah deksripsi gambar".toRequestBody("text/plain".toMediaType())
 //            val requestImageFile = file.asRequestBody("image/jpeg".toMediaType())
-//            val imageMultipart: MultipartBody.Part = MultipartBody.Part.createFormData(
-//                "photo",
-//                file.name,
-//                requestImageFile
-//            )
-//
-//            val apiService = ApiConfig().getApiService()
-//            val uploadImageRequest = apiService.uploadImage(imageMultipart, description)
-//
-//            uploadImageRequest.enqueue(object : Callback<FileUploadResponse> {
-//                override fun onResponse(
-//                    call: Call<FileUploadResponse>,
-//                    response: Response<FileUploadResponse>
-//                ) {
-//                    if (response.isSuccessful) {
-//                        val responseBody = response.body()
-//                        if (responseBody != null && !responseBody.error) {
-//                            Toast.makeText(this@MainActivity, responseBody.message, Toast.LENGTH_SHORT).show()
-//                        }
-//                    } else {
-//                        Toast.makeText(this@MainActivity, response.message(), Toast.LENGTH_SHORT).show()
-//                    }
-//                }
-//                override fun onFailure(call: Call<FileUploadResponse>, t: Throwable) {
-//                    Toast.makeText(this@MainActivity, t.message, Toast.LENGTH_SHORT).show()
-//                }
-//            })
-//        } else {
-//            Toast.makeText(this@MainActivity, "Silakan masukkan berkas gambar terlebih dahulu.", Toast.LENGTH_SHORT).show()
-//        }
+                        finish()
+                    }
+
+                    is StoryUiState.Error -> {
+                        binding.progressBar.visibility = View.GONE
+                        AlertDialog.Builder(this).apply {
+                            setTitle("Oopps!")
+                            setMessage(uiState.errorMessage)
+                            setPositiveButton("Coba Lagi") { _, _ ->
+                            }
+                            create()
+                            show()
+                        }
+                    }
+                }
+            }
+        }
     }
 }
