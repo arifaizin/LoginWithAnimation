@@ -1,5 +1,6 @@
 package com.dicoding.picodiploma.loginwithanimation.view.main
 
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -8,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.dicoding.picodiploma.loginwithanimation.data.model.ListStoryItem
 import com.dicoding.picodiploma.loginwithanimation.databinding.ItemListStoryBinding
+import com.dicoding.picodiploma.loginwithanimation.view.detail.DetailStoryActivity
 
 class StoryAdapter : ListAdapter<ListStoryItem, StoryAdapter.ListViewHolder>(DiffCallback) {
 
@@ -24,20 +26,20 @@ class StoryAdapter : ListAdapter<ListStoryItem, StoryAdapter.ListViewHolder>(Dif
 
     inner class ListViewHolder(private val binding: ItemListStoryBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(user: ListStoryItem) {
+        fun bind(storyItem: ListStoryItem) {
             with(binding) {
                 Glide.with(itemView.context)
-                    .load(user.photoUrl)
+                    .load(storyItem.photoUrl)
                     .into(binding.itemAvatar)
 
-                itemName.text = user.name
-                itemDescription.text = user.description
+                itemName.text = storyItem.name
+                itemDescription.text = storyItem.description
             }
-//            itemView.setOnClickListener {
-//                val intent = Intent(itemView.context, DetailUserActivity::class.java)
-//                intent.putExtra(DetailUserActivity.EXTRA_USERNAME, user.login)
-//                itemView.context.startActivity(intent)
-//            }
+            itemView.setOnClickListener {
+                val intent = Intent(itemView.context, DetailStoryActivity::class.java)
+                intent.putExtra(DetailStoryActivity.EXTRA_STORY, storyItem)
+                itemView.context.startActivity(intent)
+            }
         }
     }
 
