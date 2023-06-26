@@ -31,6 +31,7 @@ class StoryAdapter : ListAdapter<ListStoryItem, StoryAdapter.ListViewHolder>(Dif
                     .into(binding.itemAvatar)
 
                 itemName.text = user.name
+                itemDescription.text = user.description
             }
 //            itemView.setOnClickListener {
 //                val intent = Intent(itemView.context, DetailUserActivity::class.java)
