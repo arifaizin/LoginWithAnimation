@@ -6,15 +6,15 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.app.ActivityOptionsCompat
 import androidx.core.util.Pair
+import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.dicoding.picodiploma.loginwithanimation.data.model.ListStoryItem
 import com.dicoding.picodiploma.loginwithanimation.databinding.ItemListStoryBinding
 import com.dicoding.picodiploma.loginwithanimation.view.detail.DetailStoryActivity
 
-class StoryAdapter : ListAdapter<ListStoryItem, StoryAdapter.ListViewHolder>(DiffCallback) {
+class StoryAdapter : PagingDataAdapter<ListStoryItem, StoryAdapter.ListViewHolder>(DiffCallback) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ListViewHolder {
         val binding =
@@ -29,14 +29,14 @@ class StoryAdapter : ListAdapter<ListStoryItem, StoryAdapter.ListViewHolder>(Dif
 
     inner class ListViewHolder(private val binding: ItemListStoryBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(storyItem: ListStoryItem) {
+        fun bind(storyItem: ListStoryItem?) {
             with(binding) {
                 Glide.with(itemView.context)
-                    .load(storyItem.photoUrl)
+                    .load(storyItem?.photoUrl)
                     .into(binding.itemAvatar)
 
-                itemName.text = storyItem.name
-                itemDescription.text = storyItem.description
+                itemName.text = storyItem?.name
+                itemDescription.text = storyItem?.description
             }
             itemView.setOnClickListener {
                 val intent = Intent(itemView.context, DetailStoryActivity::class.java)

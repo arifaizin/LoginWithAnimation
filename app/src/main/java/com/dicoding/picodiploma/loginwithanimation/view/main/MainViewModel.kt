@@ -5,13 +5,12 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import com.dicoding.picodiploma.loginwithanimation.data.StoryRepository
-import com.dicoding.picodiploma.loginwithanimation.data.model.ErrorResponse
 import com.dicoding.picodiploma.loginwithanimation.data.model.ListStoryItem
 import com.dicoding.picodiploma.loginwithanimation.data.pref.UserModel
-import com.google.gson.Gson
 import kotlinx.coroutines.launch
-import retrofit2.HttpException
 
 sealed interface StoryUiState<out T> {
     data class Success<T>(val data: T) : StoryUiState<T>
@@ -34,16 +33,20 @@ class MainViewModel(private val repository: StoryRepository) : ViewModel() {
         }
     }
 
-    fun getStories() {
-        viewModelScope.launch {
-            _uiState.value = StoryUiState.Loading
-            try {
-                _uiState.value = StoryUiState.Success(repository.getStories().listStory)
-            } catch (e: HttpException) {
-                val errorBody =
-                    Gson().fromJson(e.response()?.errorBody()?.string(), ErrorResponse::class.java)
-                _uiState.value = StoryUiState.Error(errorBody.message)
-            }
-        }
-    }
+//    fun getStories() {
+//        viewModelScope.launch {
+//            _uiState.value = StoryUiState.Loading
+//            try {
+//                _uiState.value = StoryUiState.Success(repository.getStories().listStory)
+//            } catch (e: HttpException) {
+//                val errorBody =
+//                    Gson().fromJson(e.response()?.errorBody()?.string(), ErrorResponse::class.java)
+//                _uiState.value = StoryUiState.Error(errorBody.message)
+//            }
+//        }
+//    }
+
+    val stories: LiveData<PagingData<ListStoryItem>> =
+        repository.getStories().cachedIn(viewModelScope)
+
 }
