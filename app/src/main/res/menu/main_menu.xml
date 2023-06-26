@@ -5,4 +5,10 @@
         android:id="@+id/logout_menu"
         android:title="@string/logout"
         app:showAsAction="never" />
+
+    <item
+        android:id="@+id/maps_menu"
+        android:title="@string/maps"
+        android:icon="@drawable/baseline_map_24"
+        app:showAsAction="ifRoom" />
 </menu>
