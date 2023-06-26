@@ -25,11 +25,13 @@ class SignupViewModel(private val repository: StoryRepository) : ViewModel() {
         viewModelScope.launch {
             _uiState.value = UserUiState.Loading
             try {
-                _uiState.value =
-                    UserUiState.Success(repository.register(name, email, password).message)
+                val message = repository.register(name, email, password).message
+                _uiState.value = UserUiState.Success(message)
             } catch (e: HttpException) {
-                val errorBody = Gson().fromJson(e.response()?.errorBody()?.string(), ErrorResponse::class.java)
-                _uiState.value = UserUiState.Error(errorBody.message)
+                val jsonInString = e.response()?.errorBody()?.string()
+                val errorBody = Gson().fromJson(jsonInString, ErrorResponse::class.java)
+                val errorMessage = errorBody.message
+                _uiState.value = UserUiState.Error(errorMessage)
             }
         }
     }
