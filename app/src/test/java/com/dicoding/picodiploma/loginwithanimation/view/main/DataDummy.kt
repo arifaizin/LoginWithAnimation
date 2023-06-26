@@ -8,7 +8,7 @@ object DataDummy {
     fun successStoryResponse(): StoryResponse {
         val items: MutableList<ListStoryItem> = arrayListOf()
         for (i in 0..100) {
-            val quote = ListStoryItem(
+            val story = ListStoryItem(
                 id =i.toString(),
                 name =  "author + $i",
                 description = "description $i",
@@ -17,7 +17,7 @@ object DataDummy {
                 lat = -77.0364,
                 lon = 38.8951
             )
-            items.add(quote)
+            items.add(story)
         }
         return StoryResponse(
             error = false,

@@ -5,7 +5,7 @@ import androidx.paging.PagingState
 import com.dicoding.picodiploma.loginwithanimation.data.model.ListStoryItem
 import com.dicoding.picodiploma.loginwithanimation.data.network.ApiService
 
-class QuotePagingSource(private val apiService: ApiService) : PagingSource<Int, ListStoryItem>() {
+class StoryPagingSource(private val apiService: ApiService) : PagingSource<Int, ListStoryItem>() {
  
    private companion object {
        const val INITIAL_PAGE_INDEX = 1
