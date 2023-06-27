@@ -65,15 +65,13 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                 is StoryUiState.Success -> {
                     binding.progressBar.visibility = View.GONE
                     uiState.data.forEach { data ->
-                        if (data.lat != null && data.lon != null) {
-                            val latLng = LatLng(data.lat, data.lon)
-                            mMap.addMarker(
-                                MarkerOptions()
-                                    .position(latLng)
-                                    .title(data.name)
-                                    .snippet(data.description)
-                            )
-                        }
+                        val latLng = LatLng(data.lat, data.lon)
+                        mMap.addMarker(
+                            MarkerOptions()
+                                .position(latLng)
+                                .title(data.name)
+                                .snippet(data.description)
+                        )
                     }
                 }
 
