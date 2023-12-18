@@ -125,7 +125,7 @@ class AddStoryActivity : AppCompatActivity() {
             val selectedImg = result.data?.data as Uri
 
             selectedImg.let { uri ->
-                val myFile = uriToFile(uri, this)
+                val myFile = uri.uriToFile(this)
                 getFile = myFile
                 binding.previewImageView.setImageURI(uri)
             }
