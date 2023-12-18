@@ -10,17 +10,20 @@ import com.dicoding.picodiploma.loginwithanimation.data.model.ListStoryItem
 import com.dicoding.picodiploma.loginwithanimation.data.model.LoginResponse
 import com.dicoding.picodiploma.loginwithanimation.data.model.RegisterResponse
 import com.dicoding.picodiploma.loginwithanimation.data.model.StoryResponse
+import com.dicoding.picodiploma.loginwithanimation.data.network.ApiConfig
 import com.dicoding.picodiploma.loginwithanimation.data.network.ApiService
 import com.dicoding.picodiploma.loginwithanimation.data.pref.UserModel
 import com.dicoding.picodiploma.loginwithanimation.data.pref.UserPreference
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.runBlocking
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.File
 
-class StoryRepository private constructor(
+class StoryRepository constructor(
     private val apiService: ApiService,
     private val userPreference: UserPreference
 ) {
@@ -34,6 +37,8 @@ class StoryRepository private constructor(
     }
 
     fun getStories(): LiveData<PagingData<ListStoryItem>> {
+        val user = runBlocking { userPreference.getUser().first() }
+        val apiService = ApiConfig.getApiService(user.token)
         return Pager(
             config = PagingConfig(
                 pageSize = 5
@@ -72,7 +77,7 @@ class StoryRepository private constructor(
     }
 
     companion object {
-        @Volatile
+//        @Volatile
         private var instance: StoryRepository? = null
         fun getInstance(
             apiService: ApiService,
